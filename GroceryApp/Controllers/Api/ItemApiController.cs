@@ -11,11 +11,11 @@ using WikiWebStarter.Web.Models.Responses;
 
 namespace GroceryApp.Controllers.Api
 {
-    [RoutePrefix("api/items")]
+    [RoutePrefix("api/groceryitems")]
     public class ItemApiController : ApiController
     {
         [Route, HttpPost]
-        public HttpResponseMessage Insert(ItemAddRequest item)
+        public HttpResponseMessage Insert(GroceryItemAddRequest groceryItem)
         {
             if (!ModelState.IsValid)
             {
@@ -25,8 +25,8 @@ namespace GroceryApp.Controllers.Api
             {
                 try
                 {
-                    ItemService itemService = new ItemService();
-                    int id = itemService.Create(item);
+                    GroceryItemService itemService = new GroceryItemService();
+                    int id = itemService.Create(groceryItem);
                     ItemResponse<int> response = new ItemResponse<int>();
                     response.Item = id;
 
@@ -42,41 +42,41 @@ namespace GroceryApp.Controllers.Api
         [Route, HttpGet]
         public HttpResponseMessage Get()
         {
-            ItemService itemService = new ItemService();
+            GroceryItemService itemService = new GroceryItemService();
             try
             {
-                List<Item> list = itemService.GetAll();
-                ItemsResponse<Item> response = new ItemsResponse<Item>();
+                List<GroceryItem> list = itemService.GetAll();
+                ItemsResponse<GroceryItem> response = new ItemsResponse<GroceryItem>();
                 response.Items = list;
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
 
         [Route("{id:int}"), HttpGet]
         public HttpResponseMessage Get(int id)
         {
-            ItemService itemService = new ItemService();
+            GroceryItemService itemService = new GroceryItemService();
             try
             {
-                Item item = itemService.Get(id);
-                ItemResponse<Item> response = new ItemResponse<Item>();
-                response.Item = item;
+                GroceryItem groceryItem = itemService.Get(id);
+                ItemResponse<GroceryItem> response = new ItemResponse<GroceryItem>();
+                response.Item = groceryItem;
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
             }
         }
 
         [Route("{id:int}"), HttpPut]
-        public HttpResponseMessage Update(ItemUpdateRequest item, int id)
+        public HttpResponseMessage Update(GroceryItemUpdateRequest groceryItem, int id)
         {
             if (!ModelState.IsValid)
             {
@@ -86,8 +86,8 @@ namespace GroceryApp.Controllers.Api
             {
                 try
                 {
-                    ItemService itemService = new ItemService();
-                    itemService.Update(item, id);
+                    GroceryItemService itemService = new GroceryItemService();
+                    itemService.Update(groceryItem, id);
                     ItemResponse<int> response = new ItemResponse<int>();
                     response.Item = id;
 
@@ -105,7 +105,7 @@ namespace GroceryApp.Controllers.Api
         {
             try
             {
-                ItemService itemService = new ItemService();
+                GroceryItemService itemService = new GroceryItemService();
                 itemService.Delete(id);
                 ItemResponse<int> response = new ItemResponse<int>();
                 response.Item = id;

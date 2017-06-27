@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "Grocery Items List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    <h2>Grocery Items List</h2>
+
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Item Type</th>
+                    <th>Price</th>
+                    <th>Price Type</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="listBody"></tbody>
+        </table>
+    </div>
+</div>
+
+@section initScripts {
+    <script type="text/javascript" src="~/Scripts/Services/groceryItem.services.js"></script>
+}
+
+@section scripts {
+    <script type="text/html" id="listTemplate">
+        <tr>
+            <td class="name"></td>
+            <td class="itemType"></td>
+            <td class="price"></td>
+            <td class="priceType"></td>
+            <td class="quantity"></td>
+        </tr>
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            groceryItem.services.get(onGetSuccess, onGetError);
+        });
+
+        function loadTemplate() {
+            return $($("#listTemplate").html());
+        }
+
+        /* Success & Error Functions */
+        function onGetSuccess(data) {
+            if (data && data.items) {
+                for (var i = 0; i < data.items.length; i++) {
+                    var template = loadTemplate();
+                    $(".name", template).text(data.items[i].name);
+                    $(".itemType", template).text(data.items[i].itemType);
+                    $(".price", template).text(data.items[i].price);
+                    $(".priceType", template).text(data.items[i].priceType);
+                    $(".quantity", template).text(data.items[i].quantity);
+
+                    $("#listBody").append(template);
+                }
+            }
+        }
+
+        function onGetError(xhr, status, errorThrown) {
+            console.log("status: ", status);
+            console.log("xhr: ", xhr);
+            console.log("errorThrown: ", errorThrown);
+        }
+    </script>
+}
