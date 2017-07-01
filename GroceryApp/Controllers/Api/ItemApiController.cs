@@ -75,6 +75,24 @@ namespace GroceryApp.Controllers.Api
             }
         }
 
+        [Route("itemtypes"), HttpGet]
+        public HttpResponseMessage GetItemTypes()
+        {
+            GroceryItemService itemService = new GroceryItemService();
+            try
+            {
+                List<ItemType> itemTypeList = itemService.GetItemTypes();
+                ItemsResponse<ItemType> response = new ItemsResponse<ItemType>();
+                response.Items = itemTypeList;
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
         [Route("{id:int}"), HttpPut]
         public HttpResponseMessage Update(GroceryItemUpdateRequest groceryItem, int id)
         {

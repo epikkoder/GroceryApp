@@ -180,6 +180,52 @@ namespace GroceryApp.Services
             return item;
         }
 
+        public List<ItemType> GetItemTypes()
+        {
+            List<ItemType> itemTypeList = null;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlDataReader reader = null;
+                try
+                {
+                    if (conn.State != System.Data.ConnectionState.Open)
+                    {
+                        conn.Open();
+                    }
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = conn;
+                    cmd.CommandText = "ItemType_SelectAll";
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        if (itemTypeList == null)
+                        {
+                            itemTypeList = new List<ItemType>();
+                        }
+                        itemTypeList.Add(DataMapper<ItemType>.Instance.MapToObject(reader));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    if (reader != null)
+                    {
+                        reader.Close();
+                    }
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        conn.Close();
+                    }
+                }
+            }
+
+            return itemTypeList;
+        }
+
         public void Update(GroceryItemUpdateRequest item, int id)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))

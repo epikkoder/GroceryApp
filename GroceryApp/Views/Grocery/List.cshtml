@@ -7,18 +7,24 @@
     <h2>Grocery Items List</h2>
 
     <div class="container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Item Type</th>
-                    <th>Price</th>
-                    <th>Price Type</th>
-                    <th>Quantity</th>
-                </tr>
-            </thead>
-            <tbody id="listBody"></tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Item Type</th>
+                        <th>Price</th>
+                        <th>Price Type</th>
+                        <th>Quantity</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="listBody"></tbody>
+            </table>
+        </div>
+        <div class="col-sm-12" id="formDiv">
+
+        </div>
     </div>
 </div>
 
@@ -27,38 +33,95 @@
 }
 
 @section scripts {
+    <!-- List Template -->
     <script type="text/html" id="listTemplate">
-        <tr>
-            <td class="name"></td>
+        <tr class="itemRow">
+            <td class="itemName"></td>
             <td class="itemType"></td>
             <td class="price"></td>
             <td class="priceType"></td>
             <td class="quantity"></td>
+            <td>
+                <button type="button" class="btn btn-info editBtn">Edit</button>
+                <button type="button" class="btn btn-danger deleteBtn">Delete</button>
+            </td>
         </tr>
     </script>
 
+    <!--Form Template-->
+    <script type="text/html" id="formTemplate">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="itemName" class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" id="itemName" class="form-control" placeholder="ex. Apple" />
+                </div>
+                <label for="itemType" class="col-sm-2 control-label">Item Type</label>
+                <div class="col-sm-10">
+                    <select class="form-control">
+
+                    </select>
+                </div>
+            </div>
+        </form>
+    </script>
+
     <script type="text/javascript">
+        var itemTypes = null;
+
         $(document).ready(function () {
-            groceryItem.services.get(onGetSuccess, onGetError);
+            groceryItem.services.getItemTypes(onGetItemTypesSuccess, onGetError);
+            $("#listBody").on("click", ".editBtn", showEditForm);
         });
 
         function loadTemplate() {
             return $($("#listTemplate").html());
         }
 
+        function getItemTypeName(id) {
+            var typeName;
+            itemTypes.forEach(function (element) {
+                if (element.id === id) {
+                    typeName = element.typeName;
+                }
+            });
+
+            return typeName;
+        }
+
+        function appendItems(items) {
+            for (var i = 0; i < items.length; i++) {
+                var template = loadTemplate();
+                $(".editBtn", template).data("item", items[i]);
+                $(".itemName", template).text(items[i].name);
+                if (itemTypes != null) {
+                    $(".itemType", template).text(getItemTypeName(items[i].itemType));
+                }
+                $(".price", template).text(items[i].price);
+                $(".priceType", template).text(items[i].priceType);
+                $(".quantity", template).text(items[i].quantity);
+
+                $("#listBody").append(template);
+            }
+        }
+
+        function showEditForm(event) {
+            event.stopPropagation();
+            var item = $(this).data();
+        }
+
         /* Success & Error Functions */
         function onGetSuccess(data) {
             if (data && data.items) {
-                for (var i = 0; i < data.items.length; i++) {
-                    var template = loadTemplate();
-                    $(".name", template).text(data.items[i].name);
-                    $(".itemType", template).text(data.items[i].itemType);
-                    $(".price", template).text(data.items[i].price);
-                    $(".priceType", template).text(data.items[i].priceType);
-                    $(".quantity", template).text(data.items[i].quantity);
+                appendItems(data.items);
+            }
+        }
 
-                    $("#listBody").append(template);
-                }
+        function onGetItemTypesSuccess(data) {
+            if (data && data.items) {
+                itemTypes = data.items;
+                groceryItem.services.get(onGetSuccess, onGetError);
+                console.log("itemTypes:", itemTypes);
             }
         }
 
