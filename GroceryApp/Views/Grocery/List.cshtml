@@ -7,7 +7,7 @@
     <h2>Grocery Items List</h2>
 
     <div class="container">
-        <div class="table-responsive">
+        <div class="col-sm-12 table-responsive">
             <table class="table">
                 <thead>
                     <tr>
@@ -22,9 +22,7 @@
                 <tbody id="listBody"></tbody>
             </table>
         </div>
-        <div class="col-sm-12" id="formDiv">
-
-        </div>
+        <div class="col-sm-12" id="formDiv"></div>
     </div>
 </div>
 
@@ -48,7 +46,7 @@
         </tr>
     </script>
 
-    <!--Form Template-->
+    <!-- Form Template -->
     <script type="text/html" id="formTemplate">
         <form class="form-horizontal">
             <div class="form-group">
@@ -58,8 +56,8 @@
                 </div>
                 <label for="itemType" class="col-sm-2 control-label">Item Type</label>
                 <div class="col-sm-10">
-                    <select class="form-control">
-
+                    <select class="form-control" id="itemTypes">
+                        <option value="">Select an item type</option>
                     </select>
                 </div>
             </div>
@@ -74,8 +72,8 @@
             $("#listBody").on("click", ".editBtn", showEditForm);
         });
 
-        function loadTemplate() {
-            return $($("#listTemplate").html());
+        function loadTemplate(id) {
+            return $($(id).html());
         }
 
         function getItemTypeName(id) {
@@ -91,10 +89,10 @@
 
         function appendItems(items) {
             for (var i = 0; i < items.length; i++) {
-                var template = loadTemplate();
+                var template = loadTemplate("#listTemplate");
                 $(".editBtn", template).data("item", items[i]);
                 $(".itemName", template).text(items[i].name);
-                if (itemTypes != null) {
+                if (itemTypes) {
                     $(".itemType", template).text(getItemTypeName(items[i].itemType));
                 }
                 $(".price", template).text(items[i].price);
@@ -108,6 +106,17 @@
         function showEditForm(event) {
             event.stopPropagation();
             var item = $(this).data();
+            var template = loadTemplate("#formTemplate");
+
+            if (itemTypes) {
+                for (var i = 0; i < itemTypes.length; i++) {
+                    $("#itemTypes", template).append("<option value=" + itemTypes[i].id + ">" + itemTypes[i].typeName + "</option>");
+                }
+            }
+
+            if (!$("#formDiv").html()) {
+                $("#formDiv").append(template);
+            }
         }
 
         /* Success & Error Functions */
@@ -121,6 +130,7 @@
             if (data && data.items) {
                 itemTypes = data.items;
                 groceryItem.services.get(onGetSuccess, onGetError);
+
                 console.log("itemTypes:", itemTypes);
             }
         }
