@@ -3,6 +3,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section styles {
+    <style>
+        .form-horizontal .control-label {
+            text-align: left;
+        }
+    </style>
+}
+
 <div>
     <h2>Grocery Items List</h2>
 
@@ -50,15 +58,34 @@
     <script type="text/html" id="formTemplate">
         <form class="form-horizontal">
             <div class="form-group">
-                <label for="itemName" class="col-sm-2 control-label">Name</label>
-                <div class="col-sm-10">
+                <label for="itemName" class="col-sm-4 control-label">Name</label>
+                <div class="col-sm-12">
                     <input type="text" id="itemName" class="form-control" placeholder="ex. Apple" />
                 </div>
-                <label for="itemType" class="col-sm-2 control-label">Item Type</label>
-                <div class="col-sm-10">
-                    <select class="form-control" id="itemTypes">
+                <label for="itemType" class="col-sm-4 control-label">Item Type</label>
+                <div class="col-sm-12">
+                    <select class="form-control" id="itemType">
                         <option value="">Select an item type</option>
                     </select>
+                </div>
+                <label for="price" class="col-sm-4 control-label">Price</label>
+                <div class="col-sm-12">
+                    <input type="text" id="price" class="form-control" placeholder="ex. $2.99" />
+                </div>
+                <label for="priceType" class="col-sm-4 control-label">Price Type</label>
+                <div class="col-sm-12">
+                    <select class="form-control" id="priceType">
+                        <option value="">Select a price type</option>
+                        <option value="Per Item">Per Item</option>
+                        <option value="By Weight">By Weight</option>
+                    </select>
+                </div>
+                <label for="quantity" class="col-sm-4 control-label">Quantity</label>
+                <div class="col-sm-12">
+                    <input type="text" id="quantity" class="form-control" placeholder="ex. 5" />
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-success">Submit</button>
                 </div>
             </div>
         </form>
@@ -105,16 +132,23 @@
 
         function showEditForm(event) {
             event.stopPropagation();
-            var item = $(this).data();
+            var item = $(this).data("item");
+            console.log(item);
             var template = loadTemplate("#formTemplate");
 
             if (itemTypes) {
                 for (var i = 0; i < itemTypes.length; i++) {
-                    $("#itemTypes", template).append("<option value=" + itemTypes[i].id + ">" + itemTypes[i].typeName + "</option>");
+                    $("#itemType", template).append("<option value=" + itemTypes[i].id + ">" + itemTypes[i].typeName + "</option>");
                 }
             }
 
-            if (!$("#formDiv").html()) {
+            if (!$("#formDiv").html() && item) {
+                $("#itemName", template).val(item.name);
+                $("#itemType", template).val(item.itemType);
+                $("#price", template).val(item.price);
+                $("#priceType", template).val(item.priceType);
+                $("#quantity", template).val(item.quantity);
+
                 $("#formDiv").append(template);
             }
         }
