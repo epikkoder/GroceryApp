@@ -11,6 +11,7 @@ using WikiWebStarter.Web.Models.Responses;
 
 namespace GroceryApp.Controllers.Api
 {
+    [AllowAnonymous]
     [RoutePrefix("api/groceryitems")]
     public class ItemApiController : ApiController
     {
