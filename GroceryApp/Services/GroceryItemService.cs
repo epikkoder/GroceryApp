@@ -12,7 +12,7 @@ namespace GroceryApp.Services
 {
     public class GroceryItemService
     {
-        static string connectionString = "";
+        private static string connectionString;
         static GroceryItemService()
         {
             connectionString = ConfigurationManager.ConnectionStrings["dbConnection"].ConnectionString;
@@ -123,10 +123,7 @@ namespace GroceryApp.Services
                 }
                 finally
                 {
-                    if (reader != null)
-                    {
-                        reader.Close();
-                    }
+                    reader?.Close();
                     if (conn.State == System.Data.ConnectionState.Open)
                     {
                         conn.Close();

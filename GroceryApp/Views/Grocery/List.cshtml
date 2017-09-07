@@ -8,6 +8,10 @@
         .form-horizontal .control-label {
             text-align: left;
         }
+
+        .submitBtn {
+            margin-top: 10px;
+        }
     </style>
 }
 
@@ -85,7 +89,7 @@
                     <input type="text" id="quantity" class="form-control" placeholder="ex. 5" />
                 </div>
                 <div class="col-sm-2">
-                    <button type="button" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-success submitBtn">Submit</button>
                 </div>
             </div>
         </form>
@@ -97,6 +101,7 @@
         $(document).ready(function () {
             groceryItem.services.getItemTypes(onGetItemTypesSuccess, onGetError);
             $("#listBody").on("click", ".editBtn", showEditForm);
+            $("#formDiv").on("click",  ".submitBtn", submitForm);
         });
 
         function loadTemplate(id) {
@@ -132,6 +137,7 @@
 
         function showEditForm(event) {
             event.stopPropagation();
+            $("#formDiv").empty();
             var item = $(this).data("item");
             console.log(item);
             var template = loadTemplate("#formTemplate");
@@ -148,9 +154,23 @@
                 $("#price", template).val(item.price);
                 $("#priceType", template).val(item.priceType);
                 $("#quantity", template).val(item.quantity);
+                $(".submitBtn", template).data("id", item.id);
 
                 $("#formDiv").append(template);
             }
+        }
+
+        function submitForm() {
+            var data = {
+                id: $(this).data("id"),
+                name: $("#itemName").val(),
+                itemType: $("#itemType").val(),
+                price: $("#price").val(),
+                priceType: $("#priceType").val(),
+                quantity: $("#quantity").val()
+            };
+
+            groceryItem.services.update(data, onUpdateSuccess, onUpdateError);
         }
 
         /* Success & Error Functions */
@@ -170,6 +190,16 @@
         }
 
         function onGetError(xhr, status, errorThrown) {
+            console.log("status: ", status);
+            console.log("xhr: ", xhr);
+            console.log("errorThrown: ", errorThrown);
+        }
+
+        function onUpdateSuccess(data) {
+            console.log(data);
+        }
+
+        function onUpdateError(xhr, status, errorThrown) {
             console.log("status: ", status);
             console.log("xhr: ", xhr);
             console.log("errorThrown: ", errorThrown);

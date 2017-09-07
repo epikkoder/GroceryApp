@@ -38,7 +38,7 @@ groceryItem.services.get = function (onSuccess, onError) {
     $.ajax(url, settings);
 };
 
-groceryItem.services.getItemTypes = function (onSuccess, onError) {
+groceryItem.services.getItemTypes = function(onSuccess, onError) {
     var url = "/api/groceryitems/itemtypes";
     var settings = {
         cache: false,
@@ -53,4 +53,22 @@ groceryItem.services.getItemTypes = function (onSuccess, onError) {
     };
 
     $.ajax(url, settings);
-}
+};
+
+groceryItem.services.update = function(data, onSuccess, onError) {
+    var url = "/api/groceryitems/" + data.id;
+    var settings = {
+        cache: false,
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        dataType: "json",
+        error: onError,
+        success: onSuccess,
+        type: "PUT",
+        xhrfields: {
+            withCredentials: true
+        }
+    };
+
+    $.ajax(url, settings);
+};
